@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>kafka的原理 | </title>
+  <meta name="author" content="lanbr-dev">
+  
+  <meta name="description" content="">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="kafka的原理"/>
+  <meta property="og:site_name" content=""/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/blog/favicon.png" rel="icon">
+  <link rel="alternate" href="/blog/atom.xml" title="" type="application/atom+xml">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 4.1.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/blog/"></a></h1>
+  <h2><a href="/blog/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/blog/">Home</a></li>
+    
+      <li><a href="/blog/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-mq/kafka/principle" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2019-12-07T07:51:00.000Z"><a href="/blog/2019/12/07/mq/kafka/principle/">2019-12-07</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">kafka的原理</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <font face="宋体" color=black size=4>
+<p></p>
+</font>
+
+      
+    </div>
+	
+	
+	<div class="skip">
+		
+		<a class="prev" href="/blog/2019/12/07/others/hashmap/">
+			<i class="iconfont icon-prev"></i>
+				<span class="nav-default"></span>
+				<span class="nav-mobile">HashMap总结</span>
+		</a>
+		
+		 
+		<a class="next" href="/blog/2019/12/07/mq/redis/about-redis/">
+			<span class="nav-default"></span>
+			<span class="nav-mobile">redis数据结构，过期时间，事务</span>
+			<i class="iconfont icon-next"></i>
+		</a>
+		
+	</div>
+	<div class="clearfix"></div>
+	
+	
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/blog/categories/面试总结/">面试总结</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/blog/tags/kafka/">kafka</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+	
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://lanbr-dev.github.io/blog/2019/12/07/mq/kafka/principle/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <!-- 
+<div class="search">
+  <form action="javascrip:void(0);" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="lanbr-dev.github.io/blog">
+  </form>
+</div>
+-->
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/blog/categories/jdk1-8/Map/HashMap/">HashMap</a><small>2</small></li>
+  
+    <li><a href="/blog/categories/jdk1-8/Map/">Map</a><small>2</small></li>
+  
+    <li><a href="/blog/categories/jdk1-8/">jdk1.8</a><small>2</small></li>
+  
+    <li><a href="/blog/categories/《不负如来不负卿》/">《不负如来不负卿》</a><small>20</small></li>
+  
+    <li><a href="/blog/categories/面试总结/">面试总结</a><small>17</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/blog/tags/hashmap/">hashmap</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/kafka/">kafka</a><small>1</small></li>
+  
+    <li><a href="/blog/tags/mybatis/">mybatis</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/mysql/">mysql</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/redis/">redis</a><small>1</small></li>
+  
+    <li><a href="/blog/tags/spring/">spring</a><small>3</small></li>
+  
+    <li><a href="/blog/tags/springboot/">springboot</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/仓央嘉措/">仓央嘉措</a><small>20</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2019 lanbr-dev
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

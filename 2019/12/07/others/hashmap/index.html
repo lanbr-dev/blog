@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  
+  <title>HashMap总结 | </title>
+  <meta name="author" content="lanbr-dev">
+  
+  <meta name="description" content="1.HashMap 的底层是个 Node 数组（Node[] table），在数组的具体索引位置，如果存在多个节点，则可能是以链表或红黑树的形式存在。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="HashMap总结"/>
+  <meta property="og:site_name" content=""/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/blog/favicon.png" rel="icon">
+  <link rel="alternate" href="/blog/atom.xml" title="" type="application/atom+xml">
+  <link rel="stylesheet" href="/blog/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+<meta name="generator" content="Hexo 4.1.0"></head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/blog/"></a></h1>
+  <h2><a href="/blog/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/blog/">Home</a></li>
+    
+      <li><a href="/blog/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article id="post-others/hashmap" class="h-entry post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time class="dt-published" datetime="2019-12-07T07:51:00.000Z"><a href="/blog/2019/12/07/others/hashmap/">2019-12-07</a></time>
+      
+      
+  
+    <h1 class="p-name title" itemprop="headline name">HashMap总结</h1>
+  
+
+    </header>
+    <div class="e-content entry" itemprop="articleBody">
+      
+        <font face="宋体" color=black size=4>
+<p>1.HashMap 的底层是个 Node 数组（Node<K,V>[] table），在数组的具体索引位置，如果存在多个节点，则可能是以链表或红黑树的形式存在。<a id="more"></a></p>
+<p>2.增加、删除、查找键值对时，定位到哈希桶数组的位置是很关键的一步，源码中是通过下面3个操作来完成这一步：1）拿到 key 的 hashCode 值；2）将 hashCode 的高位参与运算，重新计算 hash 值；3）将计算出来的 hash 值与 “table.length - 1” 进行 &amp; 运算。</p>
+<p>3.HashMap 的默认初始容量（capacity）是 16，capacity 必须为 2 的幂次方；默认负载因子（load factor）是 0.75；实际能存放的节点个数（threshold，即触发扩容的阈值）= capacity * load factor。</p>
+<p>4.HashMap 在触发扩容后，阈值会变为原来的 2 倍，并且会对所有节点进行重 hash 分布，重 hash 分布后节点的新分布位置只可能有两个：“原索引位置” 或 “原索引+oldCap位置”。例如 capacity 为16，索引位置 5 的节点扩容后，只可能分布在新表 “索引位置5” 和 “索引位置21（5+16）”。</p>
+<p>5.导致 HashMap 扩容后，同一个索引位置的节点重 hash 最多分布在两个位置的根本原因是：1）table的长度始终为 2 的 n 次方；2）索引位置的计算方法为 “(table.length - 1) &amp; hash”。HashMap 扩容是一个比较耗时的操作，定义 HashMap 时尽量给个接近的初始容量值。</p>
+<p>6.HashMap 有 threshold 属性和 loadFactor 属性，但是没有 capacity 属性。初始化时，如果传了初始化容量值，该值是存在 threshold 变量，并且 Node 数组是在第一次 put 时才会进行初始化，初始化时会将此时的 threshold 值作为新表的 capacity 值，然后用 capacity 和 loadFactor 计算新表的真正 threshold 值。</p>
+<p>7.当同一个索引位置的节点在增加后达到 9 个时，并且此时数组的长度大于等于 64，则会触发链表节点（Node）转红黑树节点（TreeNode），转成红黑树节点后，其实链表的结构还存在，通过 next 属性维持。链表节点转红黑树节点的具体方法为源码中的 treeifyBin 方法。而如果数组长度小于64，则不会触发链表转红黑树，而是会进行扩容。</p>
+<p>8.当同一个索引位置的节点在移除后达到 6 个时，并且该索引位置的节点为红黑树节点，会触发红黑树节点转链表节点。红黑树节点转链表节点的具体方法为源码中的 untreeify 方法。</p>
+<p>9.HashMap 在 JDK 1.8 之后不再有死循环的问题，JDK 1.8 之前存在死循环的根本原因是在扩容后同一索引位置的节点顺序会反掉。</p>
+<p>10.HashMap 是非线程安全的，在并发场景下使用 ConcurrentHashMap 来代替。</p>
+</font>
+
+<p>参考：<a href="https://blog.csdn.net/v123411739/article/details/78996181" target="_blank" rel="noopener">Java集合：HashMap详解（JDK 1.8） - 程序员囧辉</a></p>
+
+      
+    </div>
+	
+	
+	<div class="skip">
+		
+		<a class="prev" href="/blog/2019/12/07/spring/spring-boot_with_mvc/">
+			<i class="iconfont icon-prev"></i>
+				<span class="nav-default"></span>
+				<span class="nav-mobile">springboot与springmvc的区别有哪些？</span>
+		</a>
+		
+		 
+		<a class="next" href="/blog/2019/12/07/mq/kafka/principle/">
+			<span class="nav-default"></span>
+			<span class="nav-mobile">kafka的原理</span>
+			<i class="iconfont icon-next"></i>
+		</a>
+		
+	</div>
+	<div class="clearfix"></div>
+	
+	
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/blog/categories/jdk1-8/">jdk1.8</a>, <a href="/blog/categories/面试总结/">面试总结</a>, <a href="/blog/categories/jdk1-8/Map/">Map</a>, <a href="/blog/categories/jdk1-8/Map/HashMap/">HashMap</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/blog/tags/hashmap/">hashmap</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+	
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="https://lanbr-dev.github.io/blog/2019/12/07/others/hashmap/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <!-- 
+<div class="search">
+  <form action="javascrip:void(0);" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="as_sitesearch" value="lanbr-dev.github.io/blog">
+  </form>
+</div>
+-->
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/blog/categories/jdk1-8/Map/HashMap/">HashMap</a><small>2</small></li>
+  
+    <li><a href="/blog/categories/jdk1-8/Map/">Map</a><small>2</small></li>
+  
+    <li><a href="/blog/categories/jdk1-8/">jdk1.8</a><small>2</small></li>
+  
+    <li><a href="/blog/categories/《不负如来不负卿》/">《不负如来不负卿》</a><small>20</small></li>
+  
+    <li><a href="/blog/categories/面试总结/">面试总结</a><small>17</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/blog/tags/hashmap/">hashmap</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/kafka/">kafka</a><small>1</small></li>
+  
+    <li><a href="/blog/tags/mybatis/">mybatis</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/mysql/">mysql</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/redis/">redis</a><small>1</small></li>
+  
+    <li><a href="/blog/tags/spring/">spring</a><small>3</small></li>
+  
+    <li><a href="/blog/tags/springboot/">springboot</a><small>2</small></li>
+  
+    <li><a href="/blog/tags/仓央嘉措/">仓央嘉措</a><small>20</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2019 lanbr-dev
+  
+</div>
+<div class="clearfix"></div></footer>
+  
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+<script src="/blog/js/jquery.imagesloaded.min.js"></script>
+<script src="/blog/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
